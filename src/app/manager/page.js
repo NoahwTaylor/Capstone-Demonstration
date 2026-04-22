@@ -34,6 +34,13 @@ const managerVideos = [
     hasMobile: false,
   },
   {
+    title: "Creating Schedules",
+    description: "How managers can create weekly schedules within the application",
+    category: "Schedule Creation",
+    desktopSrc: "/videos/Sched.mp4",
+    hasMobile: false,
+  },
+  {
     title: "Deleting Shifts",
     description: "How managers can delete shifts from the schedule instantly.",
     category: "Shift Management",

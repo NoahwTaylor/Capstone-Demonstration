@@ -9,8 +9,8 @@ const staffVideos = [
     title: "Home Page",
     description: "How staff can interact with the home page",
     category: "Home",
-    desktopSrc: "/videos/Home.mp4",
-    mobileSrc: "/videos/Home.mp4",
+    desktopSrc: "/videos/Home2.mp4",
+    mobileSrc: "/videos/Home2.mp4",
     hasMobile: false,
   },
   {

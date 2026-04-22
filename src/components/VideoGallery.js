@@ -7,9 +7,17 @@ export default function VideoGallery({ title, videos }) {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [viewMode, setViewMode] = useState("desktop");
 
+  // Group videos by category
+  const groupedVideos = videos.reduce((acc, video) => {
+    const category = video.category || "General";
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(video);
+    return acc;
+  }, {});
+
   const openVideo = (video) => {
     setSelectedVideo(video);
-    setViewMode(video.hasMobile ? "mobile" : "desktop");
+    setViewMode("desktop"); 
   };
 
   const closeVideo = () => {
@@ -19,31 +27,43 @@ export default function VideoGallery({ title, videos }) {
   return (
     <div className="w-full px-4 md:px-12 lg:px-20 py-8 md:py-12 mx-auto max-w-[1920px]">
       
-      <h2 className="text-2xl md:text-4xl font-bold text-brand mb-6 md:mb-10 border-b-4 border-brand/20 pb-3 inline-block">
+      <h2 className="text-2xl md:text-4xl font-bold text-brand mb-6 md:mb-12 border-b-4 border-brand/20 pb-3 inline-block">
         {title} Features
       </h2>
 
-      {/* Grid for Video Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-14">
-        {videos.map((vid, idx) => (
-          <motion.div
-            key={idx}
-            whileHover={{ y: -5 }}
-            onClick={() => openVideo(vid)}
-            className="group cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 overflow-hidden flex flex-col transition-all"
-          >
-            <div className="aspect-video bg-brand/5 relative flex items-center justify-center group-hover:bg-brand/10 transition-colors">
-              <PlayCircle className="w-16 h-16 md:w-20 md:h-20 text-brand opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
-            </div>
-            <div className="p-5 md:p-8 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 className="text-lg md:text-2xl font-bold text-brand mb-2">{vid.title}</h3>
-                <p className="text-sm md:text-base text-gray-600 line-clamp-3 leading-relaxed">{vid.description}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      {/* Render each category section */}
+      {Object.entries(groupedVideos).map(([category, categoryVideos]) => (
+        <div key={category} className="mb-16">
+          
+          {/* Category Header */}
+          <h3 className="text-xl md:text-2xl font-bold text-brand mb-6 flex items-center gap-3">
+            <span className="w-8 h-1 bg-brand rounded-full inline-block"></span>
+            {category}
+          </h3>
+
+          {/* Grid for Video Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
+            {categoryVideos.map((vid, idx) => (
+              <motion.div
+                key={idx}
+                whileHover={{ y: -5 }}
+                onClick={() => openVideo(vid)}
+                className="group cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 overflow-hidden flex flex-col transition-all"
+              >
+                <div className="aspect-video bg-brand/5 relative flex items-center justify-center group-hover:bg-brand/10 transition-colors">
+                  <PlayCircle className="w-16 h-16 md:w-20 md:h-20 text-brand opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                </div>
+                <div className="p-5 md:p-6 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg md:text-xl font-bold text-brand mb-2">{vid.title}</h3>
+                    <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">{vid.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      ))}
 
       {/* FIXED MOBILE SCROLLING MODAL */}
       <AnimatePresence>
@@ -52,12 +72,10 @@ export default function VideoGallery({ title, videos }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            /* Key change: overflow-y-auto placed safely on the absolute wrapper */
             className="fixed inset-0 z-50 overflow-y-auto bg-brand/95 backdrop-blur-md"
           >
             <div className="min-h-full flex flex-col items-center justify-start md:justify-center p-4 py-12 md:p-8 relative">
               
-              {/* Close Button - Pinned safely */}
               <button 
                 onClick={closeVideo}
                 className="absolute top-4 right-4 md:fixed md:top-10 md:right-10 text-white hover:text-gray-300 z-50 p-2 bg-white/10 rounded-full transition-colors"
@@ -65,7 +83,6 @@ export default function VideoGallery({ title, videos }) {
                 <X className="w-6 h-6 md:w-10 md:h-10" />
               </button>
 
-              {/* Text Container */}
               <div className="text-center mb-6 mt-8 md:mt-0 px-2 w-full max-w-4xl mx-auto">
                 <h2 className="text-2xl md:text-5xl font-bold text-white mb-3 md:mb-4 leading-tight">
                   {selectedVideo.title}
@@ -75,7 +92,7 @@ export default function VideoGallery({ title, videos }) {
                 </p>
               </div>
 
-              {/* Toggles - Adjusted for small screens */}
+              {/* Toggles - Always shows the wrapper and Desktop button, Mobile button is conditional */}
               <div className="flex bg-white/10 rounded-full p-1 mb-8 backdrop-blur-md max-w-full overflow-hidden">
                 <button
                   onClick={() => setViewMode("desktop")}
@@ -85,14 +102,18 @@ export default function VideoGallery({ title, videos }) {
                 >
                   <Monitor className="w-4 h-4 md:w-5 md:h-5" /> Desktop
                 </button>
-                <button
-                  onClick={() => setViewMode("mobile")}
-                  className={`flex items-center justify-center gap-2 px-5 py-2 md:px-8 md:py-3 rounded-full text-sm md:text-base font-bold transition-all ${
-                    viewMode === "mobile" ? "bg-white text-brand shadow-lg" : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  <Smartphone className="w-4 h-4 md:w-5 md:h-5" /> Mobile
-                </button>
+                
+                {/* Only show the Mobile toggle button if hasMobile is true */}
+                {selectedVideo.hasMobile && (
+                  <button
+                    onClick={() => setViewMode("mobile")}
+                    className={`flex items-center justify-center gap-2 px-5 py-2 md:px-8 md:py-3 rounded-full text-sm md:text-base font-bold transition-all ${
+                      viewMode === "mobile" ? "bg-white text-brand shadow-lg" : "text-white hover:bg-white/10"
+                    }`}
+                  >
+                    <Smartphone className="w-4 h-4 md:w-5 md:h-5" /> Mobile
+                  </button>
+                )}
               </div>
 
               {/* Responsive Video Player */}

@@ -9,8 +9,8 @@ const staffVideos = [
     title: "Home Page",
     description: "How staff can interact with the home page",
     category: "Home",
-    desktopSrc: "/videos/Home.mp4",
-    mobileSrc: "/videos/Home.mp4",
+    desktopSrc: "/videos/StaffHome.mp4",
+    mobileSrc: "/videos/StaffHome.mp4",
     hasMobile: false,
   },
   {
@@ -52,7 +52,8 @@ export default function StaffPresentation() {
         </div>
       </div>
       
-      <VideoGallery title="Staff Portal" videos={staffVideos} />
+      {/* ADDED layout="list" HERE */}
+      <VideoGallery title="Staff Portal" videos={staffVideos} layout="list" />
     </main>
   );
 }

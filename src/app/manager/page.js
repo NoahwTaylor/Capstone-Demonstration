@@ -104,6 +104,46 @@ const managerVideos = [
     mobileSrc: "/videos/Delete_Event.mp4",
     hasMobile: false, 
   },
+  {
+    title: "Creating team resources",
+    description: "How managers can add new resources to the team files ",
+    category: "Files",
+    desktopSrc: "/videos/Add_File.mp4",
+    mobileSrc: "/videos/Add_File.mp4",
+    hasMobile: false, 
+  },
+  {
+    title: "Editing team resources",
+    description: "How managers can edit resources in the team files ",
+    category: "Files",
+    desktopSrc: "/videos/Edit_File.mp4",
+    mobileSrc: "/videos/Edit_File.mp4",
+    hasMobile: false, 
+  },
+  {
+    title: "Deleting team resources",
+    description: "How managers can delete resources from the team files ",
+    category: "Files",
+    desktopSrc: "/videos/Delete_File.mp4",
+    mobileSrc: "/videos/Delete_File.mp4",
+    hasMobile: false, 
+  },
+  {
+    title: "Adding New Locations",
+    description: "How managers can add new locations from the team settings",
+    category: "Settings",
+    desktopSrc: "/videos/Locations.mp4",
+    mobileSrc: "/videos/Locations.mp4",
+    hasMobile: false, 
+  },
+  {
+    title: "Adding New Roles",
+    description: "How managers can add new roles from the team settings",
+    category: "Settings",
+    desktopSrc: "/videos/Role.mp4",
+    mobileSrc: "/videos/Role.mp4",
+    hasMobile: false, 
+  },
 ];
 
 export default function ManagerPresentation() {

@@ -3,11 +3,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Monitor, Smartphone, X, PlayCircle } from "lucide-react";
 
-export default function VideoGallery({ title, videos }) {
+export default function VideoGallery({ title, videos, layout = "grid" }) {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [viewMode, setViewMode] = useState("desktop");
 
-  // Group videos by category
   const groupedVideos = videos.reduce((acc, video) => {
     const category = video.category || "General";
     if (!acc[category]) acc[category] = [];
@@ -31,32 +30,61 @@ export default function VideoGallery({ title, videos }) {
         {title} Features
       </h2>
 
-      {/* Render each category section */}
       {Object.entries(groupedVideos).map(([category, categoryVideos]) => (
         <div key={category} className="mb-16">
           
-          {/* Category Header */}
           <h3 className="text-xl md:text-2xl font-bold text-brand mb-6 flex items-center gap-3">
             <span className="w-8 h-1 bg-brand rounded-full inline-block"></span>
             {category}
           </h3>
 
-          {/* Grid for Video Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
+          <div className={
+            layout === "list" 
+              ? "flex flex-col gap-8" 
+              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10"
+          }>
             {categoryVideos.map((vid, idx) => (
               <motion.div
                 key={idx}
                 whileHover={{ y: -5 }}
                 onClick={() => openVideo(vid)}
-                className="group cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 overflow-hidden flex flex-col transition-all"
+                className={`group cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 overflow-hidden flex transition-all ${
+                  layout === "list" ? "flex-col lg:flex-row" : "flex-col"
+                }`}
               >
-                <div className="aspect-video bg-brand/5 relative flex items-center justify-center group-hover:bg-brand/10 transition-colors">
-                  <PlayCircle className="w-16 h-16 md:w-20 md:h-20 text-brand opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                {/* --- UPDATED THUMBNAIL LOGIC --- */}
+                <div className={`relative flex items-center justify-center overflow-hidden bg-brand transition-colors ${
+                  layout === "list" ? "w-full lg:w-[45%] xl:w-[40%] aspect-video shrink-0" : "aspect-video"
+                }`}>
+                  
+                  {/* Shift Focus Background Logo */}
+                  <img 
+                    src="/logos/ShiftFocus-Horizontal.png" 
+                    alt="Shift Focus" 
+                    className="w-[60%] object-contain opacity-50 group-hover:opacity-30 transition-opacity duration-300"
+                  />
+
+                  {/* Play Button Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <PlayCircle className="w-16 h-16 md:w-20 md:h-20 text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all drop-shadow-xl" />
+                  </div>
                 </div>
-                <div className="p-5 md:p-6 flex-1 flex flex-col justify-between">
+                {/* -------------------------------- */}
+                
+                <div className={`flex-1 flex flex-col ${
+                  layout === "list" ? "p-8 md:p-12 justify-center" : "p-5 md:p-6 justify-between"
+                }`}>
                   <div>
-                    <h3 className="text-lg md:text-xl font-bold text-brand mb-2">{vid.title}</h3>
-                    <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">{vid.description}</p>
+                    <h3 className={`font-bold text-brand mb-2 ${
+                      layout === "list" ? "text-2xl md:text-3xl mb-4" : "text-lg md:text-xl"
+                    }`}>
+                      {vid.title}
+                    </h3>
+                    <p className={`text-gray-600 ${
+                      layout === "list" ? "text-base md:text-lg leading-relaxed" : "text-sm line-clamp-3 leading-relaxed"
+                    }`}>
+                      {vid.description}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -92,19 +120,16 @@ export default function VideoGallery({ title, videos }) {
                 </p>
               </div>
 
-              {/* Toggles - Always shows the wrapper and Desktop button, Mobile button is conditional */}
-              <div className="flex bg-white/10 rounded-full p-1 mb-8 backdrop-blur-md max-w-full overflow-hidden">
-                <button
-                  onClick={() => setViewMode("desktop")}
-                  className={`flex items-center justify-center gap-2 px-5 py-2 md:px-8 md:py-3 rounded-full text-sm md:text-base font-bold transition-all ${
-                    viewMode === "desktop" ? "bg-white text-brand shadow-lg" : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  <Monitor className="w-4 h-4 md:w-5 md:h-5" /> Desktop
-                </button>
-                
-                {/* Only show the Mobile toggle button if hasMobile is true */}
-                {selectedVideo.hasMobile && (
+              {selectedVideo.hasMobile && (
+                <div className="flex bg-white/10 rounded-full p-1 mb-8 backdrop-blur-md max-w-full overflow-hidden">
+                  <button
+                    onClick={() => setViewMode("desktop")}
+                    className={`flex items-center justify-center gap-2 px-5 py-2 md:px-8 md:py-3 rounded-full text-sm md:text-base font-bold transition-all ${
+                      viewMode === "desktop" ? "bg-white text-brand shadow-lg" : "text-white hover:bg-white/10"
+                    }`}
+                  >
+                    <Monitor className="w-4 h-4 md:w-5 md:h-5" /> Desktop
+                  </button>
                   <button
                     onClick={() => setViewMode("mobile")}
                     className={`flex items-center justify-center gap-2 px-5 py-2 md:px-8 md:py-3 rounded-full text-sm md:text-base font-bold transition-all ${
@@ -113,10 +138,9 @@ export default function VideoGallery({ title, videos }) {
                   >
                     <Smartphone className="w-4 h-4 md:w-5 md:h-5" /> Mobile
                   </button>
-                )}
-              </div>
+                </div>
+              )}
 
-              {/* Responsive Video Player */}
               <motion.div
                 layout
                 className={`relative bg-black overflow-hidden shadow-2xl transition-all duration-300 ease-in-out mx-auto ${
@@ -136,7 +160,6 @@ export default function VideoGallery({ title, videos }) {
                 />
               </motion.div>
 
-              {/* Spacer to ensure scrolling hits the bottom safely on mobile */}
               <div className="h-12 w-full md:hidden" />
 
             </div>
